@@ -1,4 +1,7 @@
 <script setup>
+
+    import 'primevue/resources/themes/aura-light-green/theme.css'
+
     let response = ref("")
     const dialog = reactive({
         text: '',
@@ -11,7 +14,7 @@
     const includeDialog = ((type)=>{
         if(type === 'Q'){
             dialog.image = 'user.png';
-            dialog.name = 'André';            
+            dialog.name = 'Usuário';            
             dialog.type = 'right';
         } else {
             dialog.image = 'bot.png';
@@ -45,30 +48,83 @@
 
 //armazena em tela o histórico das mensagens
 const conversationHistory = ref([])
-
+const ultimaId = ref()
 </script>
 
 <template>
-    <div>
-        <div v-for="(conversation, id) in conversationHistory" :key="id">
-            <TextBox :name="conversation.name" :avatarImage="conversation.image" 
-                :message="conversation.text" :type="conversation.type"/>
+    <div style="display: flex;">
+        <div class="menu-lateral">
+            <div class="titulo">
+                <h2 style="color: white">CHATLGPT</h2>
+                <div style="padding-left: 15px; padding-right: 15px;">
+                    <Divider />
+                </div>
+                <Button label="Nova Conversa" severity="info" raised />
+                <div style="padding-left: 15px; padding-right: 15px;">
+                    <Divider />
+                </div>
+            </div>
+            <div v-for="conversa in conversationHistory">
+                <div v-if="conversa.historyId !== ultimaId">
+                    {{ ultimaId = conversa.historyId }}
+                    <Button label="Conversa #1" severity="secondary" raised /><br><br>
+                </div>
+                
+            </div>
+            
+
         </div>
-        <label for=""> Type here your message!</label> <br>
-        <textarea v-model="dialog.text"/> <br> <br>        
-        <Button @click="sendMessage" label="Send"></Button>
-        <hr>
-        <div>
-            <h5>Bard: 😎</h5>
-            <p> {{ response }} </p>
+        <div class="menu-conversa">
+            <div class="titulo-conversa">
+                <h2 style="color: rgb(76, 76, 255)">CONVERSA</h2>
+            </div>
+            <Divider />
+            <div class="box" v-for="(conversation, id) in conversationHistory" :key="id">
+                <TextBox :name="conversation.name" :avatarImage="conversation.image" 
+                    :message="conversation.text" :type="conversation.type"/>
+            </div>
+            
+                <label for=""> Type here your message!</label> <br>
+                <br> <br> 
+                <InputText type="text"  v-model="dialog.text" />       
+                <Button @click="sendMessage" label="Send"></Button>
+                <hr>
+                <!-- <div>
+                    <h5>Bard: 😎</h5>
+                    <p> {{ response }} </p>
+                </div> -->
         </div>
+         
     </div>
+    
 </template>
 
 <style scoped>
-     
-    /* button{
-        background-color: black;
-        color: white;
-    } */
+
+    .menu-lateral{
+        background-color: rgb(76, 76, 255);
+        width: 250px; 
+        height: 100vh;
+        text-align: center;
+    }
+
+    .titulo{
+        text-align: center; 
+    }
+
+    .menu-conversa{
+        background-color: #fff;
+        height: 100vh;
+    } 
+
+    .titulo-conversa{
+        width: 100wh;
+        align-items: center;
+        justify-items: center;
+        text-align: center;
+    }
+    
+    .box{
+        padding: 15px;
+    }
 </style>

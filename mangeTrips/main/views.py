@@ -217,11 +217,12 @@ class ChatBotAPIView(APIView):
         
         elif conversationFound.lastCommand == 'RESERVA_PERGUNTA':
             if question == 'Sim':
-                finalMessage = 'Reservado com sucesso!'
-            else:
-                finalMessage = 'Não reservado!'
+                finalMessage = 'Reservado com sucesso! Você será redirecionado para o início do sistema.'
+            elif question == 'Não':
+                finalMessage = 'Não reservado!'  
             newAnswer = Conversation(type="A",message=finalMessage,history=conversationFound)
-    
+                # elif question == '/sair':
+                # finalMessage = 'Você voltou ao início. Como posso lhe ajudar? - Procurar uma Viagem - Listar viagens, - Pagamentos, - Minhas Reservas'
         else:
             #atualiza o último comando interpretado pela I.A.
             conversationFound.lastCommand = answer.command

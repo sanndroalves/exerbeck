@@ -34,8 +34,10 @@ const cardStyle = computed(()=> props.type === 'right' ?
             </template>
             <p class="m-0">
                 {{ props.message }}
-                <br><br>
-                <code style="font-size: 12px;">Digite "/sair" para ir para o início.</code>
+                <div v-if="props.type === 'right'">
+                    <br>
+                    <code style="font-size: 12px;">Digite "Oi" para ir para o início.</code>
+                </div>
             </p>
         </Fieldset>
     </div>
@@ -50,7 +52,7 @@ const cardStyle = computed(()=> props.type === 'right' ?
     }*/
 
 .text-box {
-
+    width: 700px;
     .p-fieldset {
         font-size: 1rem;
         color: black;       
@@ -59,14 +61,14 @@ const cardStyle = computed(()=> props.type === 'right' ?
 
 .right-style {
     .p-fieldset {
-        background-color: rgb(78, 78, 94);
-        color: white;
+        background-color: fff;
+        color: black;
     }
 }
 
 .left-style {
     .p-fieldset {
-        background-color: rgb(69, 52, 55);
+        background-color: rgb(76, 76, 255);
         color: white;
     }
 }

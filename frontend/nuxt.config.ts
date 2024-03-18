@@ -6,8 +6,8 @@ export default defineNuxtConfig({
   ],
   primevue: {
     components: {
-      include: ['Button', 'Fieldset', 'Avatar']
-    }    
+        include: '*'
+    }
   },
   css: ['primevue/resources/themes/aura-light-green/theme.css']
 })
