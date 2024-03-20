@@ -21,10 +21,24 @@ const cardStyle = computed(()=> props.type === 'right' ?
     }    
 )*/
 
+const tipo = ref('')
+switch(props.type){
+    case 'A':
+        tipo.value = 'left'
+        break;
+    case 'Q':
+        tipo.value = 'right'
+        break;
+    case 'right':
+        tipo.value = 'right'
+        break;
+}
+
+console.log("T", tipo.value)
 </script>
 
 <template>
-    <div class="text-box" :class="props.type === 'right' ? 'right-style' : 'left-style'">
+    <div class="text-box" :class="tipo === 'right' ? 'right-style' : 'left-style'">
         <Fieldset>
             <template #legend>
                 <div class="flex align-items-center pl-2">

@@ -149,7 +149,38 @@ def convertToMessage(data,attributeName):
         index += 1
     return response
 
+class ConversationView(APIView):
+    def get(self, request):
+            
+            conversations = Conversation.objects.all()
+            serializer = ConversationSerializer(conversations, many=True)
+            return Response(serializer.data)
+    
+class ConversationHistoryView(APIView):
+     def get(self, request):
+            conversations = ConversationHistory.objects.all()
+            serializer = ConversationHistorySerializer(conversations, many=True)
+            return Response(serializer.data)
+     
+     def post(self, request):
+        serializer = ConversationHistorySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 class ChatBotAPIView(APIView):
+    def get(self, request):
+            conversations = ConversationHistory.objects.all()
+            serializer = ConversationHistorySerializer(conversations, many=True)
+            return Response(serializer.data)
+
+    
+    def delete(self, request):
+        ConversationHistory.objects.all().delete()
+        return Response({'message': 'All conversations deleted'}, status=status.HTTP_204_NO_CONTENT)
+    
     def post(self, request):
         data = request.data
         question = data.get('question')
@@ -196,13 +227,6 @@ class ChatBotAPIView(APIView):
                 finalMessage = 'Infelizmente não encontramos a viagem que procura =/'
             newAnswer = Conversation(type="A",message=finalMessage,history=conversationFound)
 
-        elif answer.command == 'LIST_TRIPS':
-            trips = Trip.objects.all()
-            finalMessage += convertToMessage(trips,'title')
-            conversationFound.lastCommand = answer.command
-            conversationFound.save()
-            newAnswer = Conversation(type="A",message=finalMessage if answer.additionalMessage is None else finalMessage + '\n' + answer.additionalMessage,history=conversationFound)
-
         elif conversationFound.lastCommand == 'LIST_TRIPS':
             trips = Trip.objects.filter(Q(title__icontains=question))
             if trips.exists():
@@ -214,15 +238,20 @@ class ChatBotAPIView(APIView):
             else:                
                 finalMessage = 'Digite corretamente o nome do lugar !'
             newAnswer = Conversation(type="A",message=finalMessage + '\n' + pergunta,history=conversationFound)
-        
         elif conversationFound.lastCommand == 'RESERVA_PERGUNTA':
             if question == 'Sim':
                 finalMessage = 'Reservado com sucesso! Você será redirecionado para o início do sistema.'
             elif question == 'Não':
                 finalMessage = 'Não reservado!'  
             newAnswer = Conversation(type="A",message=finalMessage,history=conversationFound)
-                # elif question == '/sair':
-                # finalMessage = 'Você voltou ao início. Como posso lhe ajudar? - Procurar uma Viagem - Listar viagens, - Pagamentos, - Minhas Reservas'
+
+        elif answer.command == 'LIST_TRIPS':
+            trips = Trip.objects.all()
+            finalMessage += convertToMessage(trips,'title')
+            conversationFound.lastCommand = answer.command
+            conversationFound.save()
+            newAnswer = Conversation(type="A",message=finalMessage if answer.additionalMessage is None else finalMessage + '\n' + answer.additionalMessage,history=conversationFound)
+        
         else:
             #atualiza o último comando interpretado pela I.A.
             conversationFound.lastCommand = answer.command
